@@ -30,5 +30,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpmime-4.5.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jna-platform-4.1.0.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
