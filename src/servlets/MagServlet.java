@@ -20,6 +20,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import request.Evaluate;
 import utils.HttpUtils;
+import utils.JSONUtil;
 
 public class MagServlet extends HttpServlet {
 
@@ -35,7 +36,7 @@ public class MagServlet extends HttpServlet {
 		super();
 	}
 	
-	private HttpClient httpClient;
+	private HttpClient client;
 
 	/**
 	 * Destruction of the servlet. <br>
@@ -44,6 +45,7 @@ public class MagServlet extends HttpServlet {
 		super.destroy(); 
 		
 		jedisPool.close();
+		jedis.close();
 		
 	}
 
@@ -65,65 +67,57 @@ public class MagServlet extends HttpServlet {
 		Long id1 = Long.valueOf(request.getParameter("id1"));
 		Long id2 = Long.valueOf(request.getParameter("id2"));
 		
+		Paper entity1 = null;
+		Paper entity2 = null;
 		
-		
-		
-		//对id1,id2进行预处理，判断它们的id类型，再开线程，处理它们的hop关系。
-		Jedis jedis = jedisPool.getResource();
-		
-		String type1 = jedis.get(id1+"T");
-		String type2 = jedis.get(id2+"T");
-		if(type1==null||"nil".equals(type1)||type2==null||"nil".equals(type2)){
+		//对数据进行预处理
+		if(!inRedis(id1.toString())||!inRedis(id2.toString())){
 			Evaluate evaluate = new Evaluate();
 			evaluate.setExpr(String.format(QueryString.eval_judge,id1,id2));
 			evaluate.setCount(5000);
 			evaluate.setOffset(0);
 			evaluate.setAttributes("Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId");
-			String res = evaluate.doRequest(httpClient);
+			
+			String res = evaluate.doRequest(client);
 			EvaluateResult result = EvaluateResult.parse(res);
-			for(Paper entity:result.getEntities()){
-				String id = entity.getId().toString();
-				final String v1 = id+"T",v2=id+"R";
-				
-				if(entity.getAuthors()==null){
-					jedis.set(v1, "author");
-					
-				}else{
-					jedis.set(v1, "paper");
-					if(entity.getFields()!=null){
-						for(Field field:entity.getFields()){
-							jedis.sadd(v2, field.getId().toString());
-						}
-					}
-					
-					if(entity.getConference()!=null){
-						jedis.sadd(v2, entity.getConference().getId().toString());
-					}
-					if(entity.getJournal()!=null){
-						jedis.sadd(v2, entity.getJournal().getId().toString());
-					}
-					if(entity.getAuthors()!=null){
-						for(Author author:entity.getAuthors()){
-							jedis.sadd(v2, author.getId().toString(),author.getAffiliationId().toString());
-							
-							
-						}
-					}
-				}
+			if(result.getEntities().get(0).getId().equals(id1)){
+				//表示entity1在前面
+				entity1 = result.getEntities().get(0);
+				entity2 = result.getEntities().get(1);
+			}else{
+				//entity1在后面
+				entity1 = result.getEntities().get(1);
+				entity2 = result.getEntities().get(0);
 				
 			}
+			
+			
+			
+			
+			
+		}else{
+			String json1 = jedis.get(id1+"E");
+			String json2 = jedis.get(id2+"E");
+			entity1 = JSONUtil.fromString(json1, Paper.class);
+			entity2 = JSONUtil.fromString(json2, Paper.class);
+			
+			
 		}
+		writeEntity(entity1);
+		writeEntity(entity2);
+	
+		
 		
 		
 	
 		
 		PrintWriter writer = response.getWriter();
 		HopResult hopResult = new HopResult();
-		if(OneHopTest.test(id1, id2, jedis)){
-			
-			hopResult.put(id1,id2);
-		}
 		
+		if(OneHopTest.test(entity1, entity2, jedis)){
+			
+			hopResult.push(id1,id2);
+		}
 		
 		
 		writer.write(hopResult.toJSONArray());
@@ -138,12 +132,66 @@ public class MagServlet extends HttpServlet {
 		
 	}
 	
+	private boolean inRedis(String key){
+		
+		return jedis.get(key)==null||"nil".equals(jedis.get(key));
+	}
+	
+	private void writeEntity(Paper entity){ 
+		Long id = entity.getId();
+		jedis.set(id+"E", JSONUtil.toJSON(entity));
+		//将实体写入缓存。
+		if(entity.getAuthors()==null){
+			//这个实体是paper
+			jedis.set(id+"T", "paper");
+			for(Author author:entity.getAuthors()){
+				//注意，这里有个author了，把这个author也放入缓存里面.
+				writeEntity(Paper.valueOf(author));
+				jedis.sadd(id+"R", author.getId().toString());
+				if(author.getAffiliationId()!=null){
+					jedis.sadd(id+"R", author.getAffiliationId().toString());
+				}
+				
+				
+			}
+			
+			
+		}else{
+			jedis.set(id+"T","author");
+			
+			
+			
+		}
+		if(entity.getFields()!=null){
+			for(Field field:entity.getFields()){
+				jedis.sadd(id+"R", field.getId().toString());
+				
+			}
+			
+		}
+		if(entity.getConference()!=null){
+			jedis.sadd(id+"R", entity.getConference().getId().toString());
+		}
+		
+		if(entity.getJournal()!=null){
+			jedis.sadd(id+"R", entity.getJournal().getId().toString());
+		}
+		
+		
+		
+	}
+	
+	
+	
 	
 	private JedisPool jedisPool;
 	
+	private Jedis jedis;
+	
 	public void init() throws ServletException {
 		jedisPool = new JedisPool(Conf.redis_ip,Integer.valueOf(Conf.redis_port));
-		httpClient = HttpUtils.client();
+		client = HttpUtils.client();
+		jedis = jedisPool.getResource();
 	}
 
 }

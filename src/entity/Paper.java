@@ -128,6 +128,14 @@ public class Paper  implements Serializable{
 				+ ", extend=" + extend + ", logprob=" + logprob + "]";
 	}
 	
+
+	public  static  Paper valueOf(Author author){
+		Paper paper = new Paper();
+		paper.setId(author.getId());
+		return paper;
+	}
+	
+	
 	
 	
 }

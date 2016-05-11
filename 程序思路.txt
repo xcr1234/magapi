@@ -1,50 +1,29 @@
 程序思路
 
-本文档 所有输入 均以id1 = 123和id2 = 456为例。
+本文档 输入 以id1 = 123和id2 = 456为例。
 id1,id2均为long类型。
+
+因为网络请求速度比较慢，所以使用redis作为缓存。
 
 一、预处理。
 
-对于输入的id1,id2，当务之急是要找出它们是什么类型的id。
+预处理阶段要求判断输入id的类型，并将id转换为entity(json object)。
+如果id已经在redis缓存中，则从缓存中读取，否则需要发送Evaluate请求。
 
-查询redis缓存，若存在字段"123T","456T"则知道它们的类型，结束。
+缓存数据规范如下：
+例如缓存ID为123的paper实体，周围的id是[123456,123999]，其JSON为{id:"123",xxx},则缓存中记录应该如下：
+'123T'='paper' 
+'123R'=[123456,123999] 
+'123E'='{id:"123",xxx}'
 
-若不存在，则进行Evaluate查询， 
-Expr = "Or(Id=123,Id=456)"
-Attributes="Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId"
-count=10000,offset=0
-
-如果实体123的author属性为null，则说明Id123是author,将"123T"="author"存入redis数据库。
-如果实体456的author属性不为null，则说明实体456是paper，将"456T"="paper"存入redis缓存中，
-实体456的周围节点定义为集合"456R"存入redis缓存中。
 
 
 二、1-hop judgement
 
-a.若T(id1)=T(id2)='paper'  
-
-判断id1==id2或者R(id1)包含id2。 [T(123)='123T',R(456)=集合'456R']
-
-b. T(id1)='paper',T(id2)='author'
-
-判断R(id1)是否包含id2
-
-c.T(id1)='author',T(id2)='paper'
-
-进行CalcHistogram查询
-Expr = "And(Composite(AA.AuId=123),Id=456)"
-Attributes="AA.AfId,Id,AA.AuId"
-count=30,offset=0
-
-返回有结果，也就表示作者和论文有关联
-
-d.都是作者id
-舍去
-return false.
-
 
 
 三、2 hop
+
 
 
 
