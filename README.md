@@ -1,134 +1,18 @@
 #magapi
-一. 1-hop
+Microsoft Academic Graph (MAG) is a large heterogeneous graph containing entities such as authors, papers, journals, conferences and relations between them. Microsoft provides [Academic Knowledge API](https://www.microsoft.com/cognitive-services/en-us/academic-knowledge-api) for this contest. The Entity attributes are defined [here](https://www.microsoft.com/cognitive-services/en-us/academic-knowledge-api/documentation/EntityAttributes).
 
-1.1  Id1,Id2的类型都是论文的Id			
+Participants are supposed to provide a REST service endpoint that can find all the 1-hop, 2-hop, and 3-hop graph paths connecting a given pair of entity identifiers in MAG. The given pair of entity identifiers could be [Id, Id], [Id, AA.AuId], [AA.AuId, Id], [AA.AuId, AA.AuId]. Each node of a path should be one of the following identifiers: Id, F.Fid, J.JId, C.CId, AA.AuId, AA.AfId. Possible edges (a pair of adjacent nodes) of a path are:
 
-查看Id1的Rid是否等于Id2
-【注意】：论文的引用在找hop时都是单向的，比如说Id2这篇论文有引用Id1这篇论文，但是题目给出[Id1,Id2]对不是1-hop结果
+![image](https://studentclub.msra.cn/static/images/bop/2016/topic.png)
 
-1.2  Id1的类型是论文Id,Id2的类型是作者Id2
+For each test case, the REST service endpoint will receive a JSON array via HTTP with a pair of entity identifiers, where the identifiers are 64-bit integers, e.g. [123, 456]. The service endpoint needs to respond with a JSON array within 300 seconds. The response JSON array consists of a list of graph paths in the form of [path1, path2, …, pathn], where each path is an array of entity identifiers. For example, if your program finds one 1-hop paths, two 2-hop paths, and one 3-hop paths, the results may look like this: [[123,456], [123,2,456], [123,3,456], [123,4,5,456]]. For a path such as [123,4,5,456], the integers are the identifiers of the entities on the path. After receiving the response, the evaluator will wait for a random period of time before sending the next requests.
 
-查看论文Id1的作者Id号中是否有Id2
+Evaluation Metric
+The REST service must be deployed to a Standard_A3 virtual machine for the final test. There are no constraints on the programming language you can use.
 
-1.3  Id1的类型是作者Id，Id2的类型是论文Id
-
-查看Id1的作者的所有论文Id是否有等于Id2的【注1】
-
-【注1】：从实际考虑，对于1.2和1.3这两种情况，一般来说一个学术作者所有发表的论文数目，大于一篇文章的所有作者数目，
-所以在已知类型的情况下，从论文Id搜索出它的所有AA.AuId再与给出的作者Id进行比较，从而判断并找出1-hop
-
-1.4  Id1和Id2的类型都是作者Id
-
-在题目中没有作者Id到作者Id的边类型，所以舍去
-
-二. 2-hop
-
-2.1  Id1,Id2的类型都是论文的Id
-
-从题目所给出的所有边的类型分析，搜索时从两边向中间靠拢寻找可能的hop路径【注2】，具体是
-		+-------------------------------+
-		|	会议Id	      		|
-		|-------------------------------|
-		|	学术期刊Id	      	| 	
-		|-------------------------------|
-		|	学术领域Id	      	|
-	Id1——>|-------------------------------|——>Id2
-		|	作者Id			|
-		|-------------------------------|
-		|	论文Id			|
-		+-------------------------------+
-【注2】对于前面4种路径方式，采用两头向中间靠拢，对于会议Id和学期刊Id，（从实际看？）论文的这两个Id是唯一的，所以
-直接比较是否相等（其中还有2篇论文分别只有C.CId和J.JId的情况），对于学术领域Id和作者Id，一般来说返回一个集合，那么
-就要判断集合中是否有2个相等的数值；对于由论文Id到论文Id的引用路径，只能进行2度深层检索，即找到Id1论文所有的
-引用论文Id（即RId），在从这些Rid中在找它们的RId，看是否有Id2，【只能单向进行！】
-
-2.2  Id1,Id2的类型都是作者的Id
-
-同样地从题目所给边的类型分析，起点和终点都是作者类型的Id并且进行2-hop的路径类型只有两种：
-
-a.	作者Id1——>作者的所属机构Id——>作者Id2
-b.	作者Id1——>作者的所发表的论文Id——>作者Id2
-
-对于a情况，对于每一个学术作者他所在的机构Id都是唯一的，所以从两边向中间进行，比较两个返回的结果是否相同
-即可，对于b情况，实际上就是两个作者合写了一篇论文，同样两边向中间，由作者Id返回他们发表论文的Id集合，在两个集合
-中找出是否有相等的两个
-
-2.3  Id1的类型是论文Id，Id2的类型是作者Id
-
-通过分析不难发现，满足2-hop要求的路径只有：论文Id1——>论文Id3——>作者Id2这一种类型，所以由Id1找到这篇论文所有
-引用论文的Id集合，由作者Id2找到其发表的所有论文Id集合，在比较两个集合中是否有相等的数值
-
-2.4  Id1的类型是作者Id，Id2的类型是论文Id
-
-方法同上面一样
-
-三. 3-hop
-
-3.1 两个Id类型都是论文Id
-
-路径方式如下，Id3的类型都是论文Id,也就是由一个论文Id的引用论文Id集合A出发，
-对于集合A中每一个元素a,分别求出其会议Id，学术期刊Id，学术领域Id，和作者Id的集合，在和由Id2得到的这些
-类别的集合比较找出相同的两个
-
-		+-------------------------------+				
-		|	会议Id	      		|
-		|-------------------------------|
-		|	学术期刊Id	      	| 	
-		|-------------------------------|
-		|	学术领域Id	      	|
-Id1——>Id3——>|-------------------------------|——>Id2
-		|	作者Id			|
-		|-------------------------------|
-		|	论文Id			|
-		+-------------------------------+
+The test cases are not available before the final evaluation. When the evaluation starts, the evaluator system sends test cases to the REST endpoint of each team individually. Each team will receive 10 test cases (Q1to Q10). The response time for test case Qi is recorded as Ti(1≤i≤10). The final score is calculated using:
 
 
-		+-------------------------------+
-		|	会议Id	      		|
-		|-------------------------------|
-		|	学术期刊Id	      	| 	
-		|-------------------------------|
-		|	学术领域Id	      	|
-	Id1——>|-------------------------------|——>论文Id3——>Id2	
-		|	作者Id			|
-		|-------------------------------|
-		|	论文Id			|
-		+-------------------------------+
+![image](https://studentclub.msra.cn/static/images/bop/2016/score.png)
 
-3.2  两个Id的类型都是作者Id
-
-只有一种路径类型：作者Id1——>论文Id3——>论文Id4——>作者Id2
-
-找到作者Id1的所有论文的引用论文Id集合A，找到作者Id2的所有论文集合B,比较A,B是否有相同的2个元素
-
-3.3  Id1的类型是论文Id，Id2的类型是作者Id
-
-分析知路径方式有2大类：
-
-第一类：
-论文Id1——>作者Id3——>作者机构Id4——>作者Id2
-
-即论文Id1的作者和论文Id2的作者是同一个学术机构的，有Id1得到它的作者集合A，A中每一个元素a（学术作者）
-对应唯一的一个学术机构Id，这些Id组成集合B，由Id2得到这个作者的学术机构，查找其是否在集合B中
-
-第二类:
-
-论文Id1——>？？？——>论文Id3——>作者Id2
-
-其中问号？？？处表示在2-hop时两个类型都是论文Id的情况，分析见2.1
-
-3.4 Id1的类型是作者Id,Id2的类型是论文Id
-
-同样的路径有两大类，除了一种特殊情况外，其他的路径都是3.3的反向路径，这里不再复述，要注意的是，在3.3第2类中，
-
-对于论文Id1——>论文Id4——>论文Id3——>作者Id2，论文的引用是单向的，不能认为同时存在
-
-作者Id2——>论文Id3——>论文Id4——>论文Id1这条路径
-
-
-
-
-
-
-
-
+where Ni is the size of the solution (the total number of correct paths) for Qi , Ki is the total number of paths returned by the REST service, Mi is the number of distinct correct paths returned by the REST service.
