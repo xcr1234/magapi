@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
 public class CalcHistogramResult  implements Serializable {
 
@@ -24,7 +24,7 @@ public class CalcHistogramResult  implements Serializable {
 	private String expr;
 	
 	private Integer num_entities;
-	
+	@SerializedName("histogram")
 	private List<Histogram> histograms;
 	
 	private Boolean aborted;
