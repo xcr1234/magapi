@@ -24,7 +24,7 @@ public class CalcHistogramResult  implements Serializable {
 	private String expr;
 	
 	private Integer num_entities;
-	@SerializedName("histogram")
+	
 	private List<Histogram> histograms;
 	
 	private Boolean aborted;

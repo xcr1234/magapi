@@ -87,6 +87,8 @@ public class MagServlet extends HttpServlet {
 				entity1 = result.getEntities().get(1);
 				entity2 = result.getEntities().get(0);
 			}
+			
+			
 			jedis.set(id1+"E", JSONUtil.toJSON(entity1));
 			jedis.set(id2+"E", JSONUtil.toJSON(entity2));
 			

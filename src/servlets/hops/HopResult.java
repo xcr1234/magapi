@@ -1,18 +1,20 @@
 package servlets.hops;
 
 
-import java.util.HashSet;
 
 import com.google.gson.Gson;
 
-public class HopResult extends HashSet<Long[]>{
+public class HopResult extends ConcurrentHashSet<Long[]>{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5223538796959879198L;
 	
-	public synchronized boolean push(Long ... id){
+	public boolean push(Long ... id){
+		for(Long i:id){
+			if(i==null) return false;
+		}
 		return super.add(id);
 	}
 	
@@ -21,5 +23,7 @@ public class HopResult extends HashSet<Long[]>{
 		return gson.toJson(this);
 		
 	}
+	
+	
 
 }

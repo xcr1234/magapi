@@ -15,6 +15,11 @@ import entity.Paper;
  */
 public class OnePPTest implements Test{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -462905287669324296L;
+
 	@Override
 	public void test(Paper entity1, Paper entity2, HopResult result,HttpClient client,Jedis jedis)
 			throws IOException {
