@@ -1,30 +1,30 @@
-����˼·
+﻿程序思路
 
-���ĵ� ���� ��id1 = 123��id2 = 456Ϊ����
-id1,id2��Ϊlong���͡�
+本文档 输入 以id1 = 123和id2 = 456为例。
+id1,id2均为long类型。
 
-��Ϊ���������ٶȱȽ���������ʹ��redis��Ϊ���档
+因为网络请求速度比较慢，所以使用redis作为缓存。
 
-һ��Ԥ������
+一、预处理。
 
-Ԥ�����׶�Ҫ���ж�����id�����ͣ�����idת��Ϊentity(json object)��
-���id�Ѿ���redis�����У���ӻ����ж�ȡ��������Ҫ����Evaluate����
+预处理阶段要求判断输入id的类型，并将id转换为entity(json object)。
+如果id已经在redis缓存中，则从缓存中读取，否则需要发送Evaluate请求。
 
-�������ݹ淶���£�
-���绺��IDΪ123��paperʵ�壬��Χ��id��[123456,123999]����JSONΪ{id:"123",xxx},�򻺴��м�¼Ӧ�����£�
+缓存数据规范如下：
+例如缓存ID为123的paper实体，周围的id是[123456,123999]，其JSON为{id:"123",xxx},则缓存中记录应该如下：
 '123T'='paper' 
 '123R'=[123456,123999] 
 '123E'='{id:"123",xxx}'
 
 
 
-����1-hop judgement
+二、1-hop judgement
 
 
 
-����2 hop
+三、2 hop
 
 
 
 
-�ġ�3 hop
+四、3 hop
