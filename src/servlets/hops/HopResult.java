@@ -1,10 +1,11 @@
 package servlets.hops;
 
 
-import java.util.ArrayList;
+import java.util.HashSet;
+
 import com.google.gson.Gson;
 
-public class HopResult extends ArrayList<Long[]>{
+public class HopResult extends HashSet<Long[]>{
 
 	/**
 	 * 

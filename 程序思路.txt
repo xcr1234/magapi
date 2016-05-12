@@ -7,14 +7,17 @@ id1,id2均为long类型。
 
 一、预处理。
 
-预处理阶段要求判断输入id的类型，并将id转换为entity(json object)。
-如果id已经在redis缓存中，则从缓存中读取，否则需要发送Evaluate请求。
+预处理阶段要求根据二者id，获取二者的实体类、类别和周围节点。
 
-缓存数据规范如下：
-例如缓存ID为123的paper实体，周围的id是[123456,123999]，其JSON为{id:"123",xxx},则缓存中记录应该如下：
-'123T'='paper' 
-'123R'=[123456,123999] 
-'123E'='{id:"123",xxx}'
+因为一次查询可以查询两个id的信息，故只要有一个id不在redis缓存中，就发送API查询。
+
+Evaluate 
+expr=Or(Id=id1,Id=id2),Attributes="Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId"
+count=5000,offset=0
+
+需要将id1,id2封装为entity1,entity2以供后续的使用。
+
+
 
 
 

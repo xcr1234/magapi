@@ -12,14 +12,15 @@ import org.apache.http.client.HttpClient;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import request.Evaluate;
 import servlets.hops.HopResult;
 import utils.HttpUtils;
 import utils.JSONUtil;
 
 import common.Conf;
+import common.QueryString;
 
-import entity.Author;
-import entity.Field;
+import entity.EvaluateResult;
 import entity.Paper;
 
 public class MagServlet extends HttpServlet {
@@ -68,6 +69,37 @@ public class MagServlet extends HttpServlet {
 		Long id2 = Long.valueOf(request.getParameter("id2"));
 		
 		
+		//预处理过程，将id1,id2转换为entity1和entity2
+		Paper entity1 = null,entity2 = null;
+		if(!inCache(id1+"E")||!inCache(id2+"E")){
+			//进行查询
+			Evaluate evaluate = new Evaluate();
+			evaluate.setExpr(String.format(QueryString.eval_judge,id1,id2));
+			evaluate.setCount(5000);
+			evaluate.setOffset(0);
+			evaluate.setAttributes("Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId");
+			String res = evaluate.doRequest(client);
+			EvaluateResult result = EvaluateResult.parse(res);
+			if(result.getEntities().get(0).getId().equals(id1)){
+				entity1 = result.getEntities().get(0);
+				entity2 = result.getEntities().get(1);
+			}else{
+				entity1 = result.getEntities().get(1);
+				entity2 = result.getEntities().get(0);
+			}
+			jedis.set(id1+"E", JSONUtil.toJSON(entity1));
+			jedis.set(id2+"E", JSONUtil.toJSON(entity2));
+			
+		}else{
+			entity1 = JSONUtil.fromString(jedis.get(id1+"E"), Paper.class);
+			entity2 = JSONUtil.fromString(jedis.get(id2+"E"), Paper.class);
+			
+			
+		}
+		
+		
+	
+		
 		
 		PrintWriter writer = response.getWriter();
 		HopResult hopResult = new HopResult();
@@ -85,6 +117,11 @@ public class MagServlet extends HttpServlet {
 		
 		
 		
+	}
+	
+	private boolean inCache(String id){
+		String get = jedis.get(id);
+		return get==null||"nil".equals(get);
 	}
 	
 	
