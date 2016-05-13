@@ -41,7 +41,7 @@ public class TwoAPTest implements Test {
 			calcHistogram.setCount(1000);
 			calcHistogram.setOffset(0);
 			
-			String r = calcHistogram.doRequest(client,10000);
+			String r = calcHistogram.doRequest(client,15000);
 			CalcHistogramResult res = CalcHistogramResult.parse(r);
 			
 			if(res.getNum_entities()>0){
