@@ -3,24 +3,30 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Paper  implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -698121851699656815L;
-	@SerializedName("Id")
+	
+	@JsonProperty("Id")
 	private Long id;
-	@SerializedName("Ti")
+	
+	@JsonProperty("Ti")
 	private String paperTitle;
-	@SerializedName("Y")
+	
+	@JsonProperty("Y")
 	private Integer paperYear;
-	@SerializedName("D")
+	
+	@JsonProperty("D")
 	private String date;
-	@SerializedName("CC")
+	
+	@JsonProperty("CC")
 	private Integer citationCount;
-	@SerializedName("AA")
+	
+	@JsonProperty("AA")
 	private List<Author> authors;
 	public List<Author> getAuthors() {
 		return authors;
@@ -28,17 +34,23 @@ public class Paper  implements Serializable{
 	public void setAuthors(List<Author> author) {
 		this.authors = author;
 	}
-	@SerializedName("F")
+	
+	@JsonProperty("F")
 	private List<Field> fields;
-	@SerializedName("J")
+	
+	@JsonProperty("J")
 	private Journal journal;
-	@SerializedName("C")
+	
+	@JsonProperty("C")
 	private Conference conference;
-	@SerializedName("RId")
-	private Long 	Reference ;
-	@SerializedName("W")
+
+	@JsonProperty("RId")
+	private List<Long> 	Reference ;
+
+	@JsonProperty("W")
 	private String words;
-	@SerializedName("E")
+	
+	@JsonProperty("E")
 	private String extend;
 	
 	public Float getLogprob() {
@@ -97,10 +109,10 @@ public class Paper  implements Serializable{
 	public void setConference(Conference conference) {
 		this.conference = conference;
 	}
-	public Long getReference() {
+	public List<Long> getReference() {
 		return Reference;
 	}
-	public void setReference(Long reference) {
+	public void setReference(List<Long> reference) {
 		Reference = reference;
 	}
 	public String getWords() {

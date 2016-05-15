@@ -1,21 +1,34 @@
 package utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class JSONUtil {
-	public static <T> T fromString(String json,Class<T> clazz){
-		Gson gson = new Gson();
-		return gson.fromJson(json, clazz);
-		
-	}
-	
-	public static String toJSON(Object object){
-		Gson gson = new Gson();
-		return gson.toJson(object);
-	}
-	
-	
 
-	
+	static ObjectMapper mapper = new ObjectMapper();
+
+	public static <T> T fromString(String json, Class<T> clazz) {
+		
+		try {
+			return mapper.readValue(json, clazz);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
+	public static String toJSON(Object object) {
+		
+		try {
+			return mapper.writeValueAsString(object);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+
+	}
+
 }

@@ -3,8 +3,7 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
+import utils.JSONUtil;
 
 public class CalcHistogramResult  implements Serializable {
 
@@ -66,8 +65,7 @@ public class CalcHistogramResult  implements Serializable {
 	}
 	
 	public static CalcHistogramResult parse(String str){
-		Gson gson = new Gson();
-		return gson.fromJson(str, CalcHistogramResult.class);
+		return JSONUtil.fromString(str, CalcHistogramResult.class);
 	}
 	
 	

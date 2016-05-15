@@ -1,8 +1,10 @@
 package servlets.hops;
 
+import utils.JSONUtil;
 
 
-import com.google.gson.Gson;
+
+
 
 public class HopResult extends ConcurrentHashSet<Long[]>{
 
@@ -19,8 +21,7 @@ public class HopResult extends ConcurrentHashSet<Long[]>{
 	}
 	
 	public String toJSONArray(){
-		Gson gson = new Gson();
-		return gson.toJson(this);
+		return JSONUtil.toJSON(this);
 		
 	}
 	

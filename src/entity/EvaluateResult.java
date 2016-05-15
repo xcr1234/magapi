@@ -3,8 +3,7 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import utils.JSONUtil;
 
 public class EvaluateResult  implements Serializable{
 
@@ -43,8 +42,7 @@ public class EvaluateResult  implements Serializable{
 	}
 	
 	public static EvaluateResult parse(String json){
-		Gson gson = new Gson();
-		return gson.fromJson(json, EvaluateResult.class);
+		return JSONUtil.fromString(json, EvaluateResult.class);
 	}
 
 }

@@ -31,9 +31,11 @@ public class OnePPTest implements Test{
 			return;
 			
 		}
-		if(entity1.getConference()!=null&&Objects.equals(entity1.getConference().getId(), id2)){
-			result.push(id1,id2);
-			return;
+		if(entity1.getReference()!=null){
+			if(entity1.getReference().contains(id2)){
+				result.push(id1,id2);
+				return;
+			}
 			
 		}
 	}

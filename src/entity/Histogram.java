@@ -3,7 +3,8 @@ package entity;
 import java.io.Serializable;
 import java.util.List;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public class Histogram implements Serializable {
 
@@ -13,11 +14,14 @@ public class Histogram implements Serializable {
 	private static final long serialVersionUID = 506828660434180138L;
 	
 	private String attribute;
-	@SerializedName("distinct_values")
+	
+	@JsonProperty("distinct_values")
 	private Integer distinct;
-	@SerializedName("total_count")
+	
+	@JsonProperty("total_count")
 	private Integer total;
-	@SerializedName("histogram")
+	
+	@JsonProperty("histogram")
 	private List<Item> items;
 	
 	
@@ -77,7 +81,9 @@ public class Histogram implements Serializable {
 	}
 
 
-	public class Item implements Serializable{
+	public static class Item implements Serializable{
+
+		
 
 		/**
 		 * 

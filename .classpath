@@ -22,7 +22,6 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-codec-1.9.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-logging-1.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/fluent-hc-4.5.2.jar"/>
-	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/gson-2.3.1.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpclient-4.5.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpclient-cache-4.5.2.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/httpclient-win-4.5.2.jar"/>
@@ -31,5 +30,11 @@
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jna-4.1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jna-platform-4.1.0.jar"/>
 	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/commons-pool2-2.4.2.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-annotations-2.2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-core-2.2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-core-asl-1.8.8.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-databind-2.2.1.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-mapper-asl-1.8.8.jar"/>
+	<classpathentry kind="lib" path="WebRoot/WEB-INF/lib/jackson-module-jaxb-annotations-2.2.1.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>

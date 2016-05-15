@@ -77,7 +77,7 @@ public class MagServlet extends HttpServlet {
 			evaluate.setExpr(String.format(QueryString.eval_judge,id1,id2));
 			evaluate.setCount(5000);
 			evaluate.setOffset(0);
-			evaluate.setAttributes("Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId");
+			evaluate.setAttributes("Id,F.FId,C.CId,J.JId,AA.AuId,AA.AfId,RId");
 			String res = evaluate.doRequest(client);
 			EvaluateResult result = EvaluateResult.parse(res);
 			if(result.getEntities().get(0).getId().equals(id1)){

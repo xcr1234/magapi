@@ -53,17 +53,19 @@ public class TwoPPTest implements Test {
 		}
 		
 		//判断引用论文id，也就是找一篇论文，其Id=entity1.rid，而rid=entity2.id。
-		if(entity1.getReference()!=null&&entity2.getReference()!=null){
-			CalcHistogram calcHistogram = new CalcHistogram();
-			calcHistogram.setAttributes("Id");
-			calcHistogram.setExpr(String.format(QueryString.calc_con, entity1.getReference(),id2));
-			calcHistogram.setCount(1);
-			calcHistogram.setOffset(0);
-			String r = calcHistogram.doRequest(client);
-			CalcHistogramResult res = CalcHistogramResult.parse(r);
-			if(res.getNum_entities()>0){
-				result.push(id1,entity1.getReference(),id2);
-				
+		if(entity1.getReference()!=null){
+			for(Long rid:entity1.getReference()){
+				CalcHistogram calcHistogram = new CalcHistogram();
+				calcHistogram.setAttributes("Id");
+				calcHistogram.setExpr(String.format(QueryString.calc_con, rid,id2));
+				calcHistogram.setCount(1);
+				calcHistogram.setOffset(0);
+				String r = calcHistogram.doRequest(client);
+				CalcHistogramResult res = CalcHistogramResult.parse(r);
+				if(res.getNum_entities()>0){
+					result.push(id1,rid,id2);
+					
+				}
 			}
 		}
 	

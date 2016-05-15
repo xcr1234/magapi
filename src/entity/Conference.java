@@ -2,7 +2,7 @@ package entity;
 
 import java.io.Serializable;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Conference implements Serializable{
 
@@ -11,9 +11,11 @@ public class Conference implements Serializable{
 	 */
 	private static final long serialVersionUID = -710871423321084453L;
 	
-	@SerializedName("CN")
+
+	@JsonProperty("CN")
 	private String name;
-	@SerializedName("CId")
+	
+	@JsonProperty("CId")
 	private Long id;
 	public String getName() {
 		return name;
