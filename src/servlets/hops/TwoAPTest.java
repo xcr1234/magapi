@@ -21,7 +21,7 @@ public class TwoAPTest implements Test {
 	/**
 	 * 
 	 */
-	private static final String query = "Composite(AA.AuId=%d),And(Composite(C.CId=%d))";
+	private static final String query = "And(Composite(AA.AuId=%d),Composite(C.CId=%d))";
 
 	
 	private static final long serialVersionUID = 5742465467249747596L;
@@ -34,26 +34,34 @@ public class TwoAPTest implements Test {
 		Long id1 =entity1.getId();
 		Long id2 = entity2.getId();
 		if(entity2.getConference()!=null){
-			
-			CalcHistogram calcHistogram = new CalcHistogram();
-			calcHistogram.setExpr(String.format(query, entity1.getId(),entity2.getConference().getId()));
-			calcHistogram.setAttributes("Id");
-			calcHistogram.setCount(1000);
-			calcHistogram.setOffset(0);
-			
-			String r = calcHistogram.doRequest(client,15000);
-			CalcHistogramResult res = CalcHistogramResult.parse(r);
-			
-			if(res.getNum_entities()>0){
-				Histogram histogram = res.getHistograms().get(0);
+			int total = -1;
+			int offset = 0;
+			while(offset<total||total<0){
+				CalcHistogram calcHistogram = new CalcHistogram();
+				calcHistogram.setExpr(String.format(query, entity1.getId(),entity2.getConference().getId()));
+				calcHistogram.setAttributes("Id");
+				calcHistogram.setCount(50);
 				
-				for(Item item:histogram.getItems()){
-					result.push(id1,item.getValue(),id2);
+				calcHistogram.setOffset(offset);
+				
+				String r = calcHistogram.doRequest(client,5000);
+				//System.out.println(r);
+				CalcHistogramResult res = CalcHistogramResult.parse(r);
+				total = res.getNum_entities();
+				if(res.getNum_entities()>0){
+					Histogram histogram = res.getHistograms().get(0);
+					
+					for(Item item:histogram.getItems()){
+						result.push(id1,item.getValue(),id2);
+						
+					}
+					
 					
 				}
-				
+				offset = offset + 50;
 				
 			}
+			
 			
 			
 		}

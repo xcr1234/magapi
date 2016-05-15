@@ -40,25 +40,32 @@ public class TwoPATest implements Test {
 		
 		
 		if(entity1.getConference()!=null){
-			CalcHistogram calcHistogram = new CalcHistogram();
-			calcHistogram.setExpr(String.format(query, entity1.getConference().getId(),entity2));
-			calcHistogram.setAttributes("Id");
-			calcHistogram.setCount(1000);
-			calcHistogram.setOffset(0);
 			
-			String r = calcHistogram.doRequest(client,10000);
-			CalcHistogramResult res = CalcHistogramResult.parse(r);
-			
-			if(res.getNum_entities()>0){
+			int total = -1;
+			int offset = 0;
+			while(offset<total||total<0){
+				CalcHistogram calcHistogram = new CalcHistogram();
+				calcHistogram.setExpr(String.format(query, entity1.getConference().getId(),entity2.getId()));
+				calcHistogram.setAttributes("Id");
+				calcHistogram.setCount(50);
+				calcHistogram.setOffset(offset);
 				
-				Histogram histogram = res.getHistograms().get(0);
-				for(Item item:histogram.getItems()){
-					result.push(id1,item.getValue(),id2);
+				String r = calcHistogram.doRequest(client,10000);
+				CalcHistogramResult res = CalcHistogramResult.parse(r);
+				total =res.getNum_entities();
+				if(res.getNum_entities()>0){
+					
+					Histogram histogram = res.getHistograms().get(0);
+					for(Item item:histogram.getItems()){
+						result.push(id1,item.getValue(),id2);
+						
+					}
+					
 					
 				}
-				
-				
+				offset+=50;
 			}
+			
 			
 			
 		}

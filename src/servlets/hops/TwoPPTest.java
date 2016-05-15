@@ -37,11 +37,11 @@ public class TwoPPTest implements Test {
 		if(entity1.getAuthors()!=null&&entity2.getAuthors()!=null){
 			for(Author au1:entity1.getAuthors()){
 				for(Author au2:entity2.getAuthors()){
-					if(Objects.equals(au1.getId(), au2.getId())){
+					if(au1.getId()!=null&&au1.getId().equals(au2.getId())){
 						
 						result.push(id1,au1.getId(),id2);
 					}
-					if(Objects.equals(au1.getAffiliationId(), au2.getAffiliationId())){
+					if(au1.getAffiliationId()!=null&&au1.getAffiliationId().equals(au2.getAffiliationId())){
 						
 						result.push(id1,au1.getAffiliationId(),id2);
 					}

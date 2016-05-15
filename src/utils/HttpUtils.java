@@ -23,6 +23,8 @@ public class HttpUtils {
 		return HttpClients.custom().build();
 	}
 	
+	
+	
 	public static HttpClient client(CookieStore cookiestore){
 		return HttpClients.custom().setDefaultCookieStore(cookiestore).build();
 	}
