@@ -1,8 +1,11 @@
 #Microsoft Academic Graph (MAG)
 
-![image](http://7fvf6a.com1.z0.glb.clouddn.com/%2Fgit%2FBOPPoster.jpg)
+
 
 Microsoft Academic Graph (MAG) is a large heterogeneous graph containing entities such as authors, papers, journals, conferences and relations between them. Microsoft provides [Academic Knowledge API](https://www.microsoft.com/cognitive-services/en-us/academic-knowledge-api) for this contest. The Entity attributes are defined [here](https://www.microsoft.com/cognitive-services/en-us/academic-knowledge-api/documentation/EntityAttributes).
+
+![image](http://7fvf6a.com1.z0.glb.clouddn.com/%2Fgit%2FBOPPoster.jpg)
+
 
 Participants are supposed to provide a REST service endpoint that can find all the 1-hop, 2-hop, and 3-hop graph paths connecting a given pair of entity identifiers in MAG. The given pair of entity identifiers could be [Id, Id], [Id, AA.AuId], [AA.AuId, Id], [AA.AuId, AA.AuId]. Each node of a path should be one of the following identifiers: Id, F.Fid, J.JId, C.CId, AA.AuId, AA.AfId. Possible edges (a pair of adjacent nodes) of a path are:
 
